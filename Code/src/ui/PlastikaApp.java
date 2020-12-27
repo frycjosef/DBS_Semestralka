@@ -32,15 +32,17 @@ public class PlastikaApp {
         database.initTables();
         /*********************************/
 
+
+
          //Vypis tabulek a sloupcu v nich
-        /*
+
         for (Table e:database.getTables()){
             System.out.println();
             System.out.println(e.getName().toUpperCase());
             for(int i=0;i<e.getColumns().size();i++){
                 System.out.println(e.getColumns().get(i).getName() + " " + e.getColumns().get(i).getDatatype());
             }
-        }*/
+        }
 
 
 

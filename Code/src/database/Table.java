@@ -20,6 +20,14 @@ public class Table {
         return columns;
     }
 
+    public String[] getColumnNames(){
+        String[]arr = new String[columns.size()];
+        for (int i=0;i<arr.length;i++){
+            arr[i]=columns.get(i).getName();
+        }
+        return arr;
+    }
+
     public String getName(){
         return name;
     }
