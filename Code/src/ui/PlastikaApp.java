@@ -1,16 +1,15 @@
 package ui;
 
 import database.Database;
+import database.Table;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class PlastikaApp {
     public static Scanner sc = new Scanner (System.in);
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         /*Connect database*/
         String connectionUrl =
                 "jdbc:sqlserver://147.230.21.34:1433;"
@@ -29,8 +28,24 @@ public class PlastikaApp {
         }
         /*******************************************/
 
+        /*Zjištění existujících tabulek*/
+        database.initTables();
+        /*********************************/
+
+        /* Vypis tabulek a sloupcu v nich
+        for (Table e:database.getTables()){
+            System.out.println();
+            System.out.println(e.getName().toUpperCase());
+            for(int i=0;i<e.getColumns().size();i++){
+                System.out.println(e.getColumns().get(i));
+            }
+        }*/
+
+
+
         boolean konec = false;
         int volba;
+        int volba2;
 
         while(!konec){
             mainMenu();
@@ -46,10 +61,31 @@ public class PlastikaApp {
                     //odstranit zaznam
                     break;
                 case 4:
-                    //ziskat zaznam podle id
+                    System.out.println();
+                    System.out.println("Vyber tabulku");
+                    database.listTables();
+                    System.out.println("0. Zpět");
+                    volba2=nacistVolbu();
+                    if(volba2>database.getTables().size()){
+                        System.out.println("Neplatná volba");
+                    }
+                    if(volba2!=0){
+                        System.out.println("Zadej id");
+                        System.out.println(database.findViaId(sc.nextInt(), volba2-1));
+                    }
                     break;
                 case 5:
-                    //ziskat vsechny zaznamy
+                    System.out.println();
+                    System.out.println("Vyber tabulku");
+                    database.listTables();
+                    System.out.println("0. Zpět");
+                    volba2=nacistVolbu();
+                    if(volba2>database.getTables().size()){
+                        System.out.println("Neplatná volba");
+                    }
+                    if(volba2!=0){
+                        System.out.println(database.listTable(volba2-1));
+                    }
                     break;
                 case 0:
                     konec=true;
