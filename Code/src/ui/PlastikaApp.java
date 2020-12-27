@@ -32,12 +32,13 @@ public class PlastikaApp {
         database.initTables();
         /*********************************/
 
-        /* Vypis tabulek a sloupcu v nich
+         //Vypis tabulek a sloupcu v nich
+        /*
         for (Table e:database.getTables()){
             System.out.println();
             System.out.println(e.getName().toUpperCase());
             for(int i=0;i<e.getColumns().size();i++){
-                System.out.println(e.getColumns().get(i));
+                System.out.println(e.getColumns().get(i).getName() + " " + e.getColumns().get(i).getDatatype());
             }
         }*/
 
@@ -53,18 +54,36 @@ public class PlastikaApp {
             switch (volba){
                 case 1:
                     //pridat zaznam
+                    vyberTabulku(database);
+                    volba2=nacistVolbu();
+                    if(volba2>database.getTables().size()){
+                        System.out.println("Neplatná volba");
+                    }
+                    if(volba2!=0){
+                        database.pridejZaznam(volba2-1);
+                    }
                     break;
                 case 2:
                     //editovat zaznam
                     break;
                 case 3:
-                    //odstranit zaznam
+                    vyberTabulku(database);
+                    volba2=nacistVolbu();
+                    if(volba2>database.getTables().size()){
+                        System.out.println("Neplatná volba");
+                    }
+                    if(volba2!=0){
+                        System.out.println("Zadej id záznamu, který má být smazán");
+                        System.out.println("0. Zpět");
+                        volba=nacistVolbu();
+                        if(volba>0){
+                            database.odstranZaznam(volba2-1,volba);
+                        }
+                        if(volba<0) System.out.println("Neplatná volba");
+                    }
                     break;
                 case 4:
-                    System.out.println();
-                    System.out.println("Vyber tabulku");
-                    database.listTables();
-                    System.out.println("0. Zpět");
+                    vyberTabulku(database);
                     volba2=nacistVolbu();
                     if(volba2>database.getTables().size()){
                         System.out.println("Neplatná volba");
@@ -75,10 +94,7 @@ public class PlastikaApp {
                     }
                     break;
                 case 5:
-                    System.out.println();
-                    System.out.println("Vyber tabulku");
-                    database.listTables();
-                    System.out.println("0. Zpět");
+                    vyberTabulku(database);
                     volba2=nacistVolbu();
                     if(volba2>database.getTables().size()){
                         System.out.println("Neplatná volba");
@@ -97,6 +113,14 @@ public class PlastikaApp {
 
 
     }
+
+    public static void vyberTabulku(Database database){
+        System.out.println();
+        System.out.println("Vyber tabulku");
+        database.listTables();
+        System.out.println("0. Zpět");
+    }
+
 
     public static void mainMenu(){
         System.out.println();

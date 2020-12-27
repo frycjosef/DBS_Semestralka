@@ -53,10 +53,7 @@ public class Database {
 
 
         for(Table e:tables){
-            ResultSet rs2 = stmt2.executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '"+e.getName()+"'");
-            while (rs2.next()){
-                e.addColumn(rs2.getString("COLUMN_NAME"));
-            }
+            e.initColumns(this.conn);
         }
 
     }
@@ -76,7 +73,7 @@ public class Database {
 
         while (rs.next()){
             for(int i=0;i<tables.get(tableIndex).getColumns().size();i++){
-                tmp.append(tables.get(tableIndex).getColumns().get(i)+": "+rs.getString(tables.get(tableIndex).getColumns().get(i))+"\n");
+                tmp.append(tables.get(tableIndex).getColumns().get(i).getName()+": "+rs.getString(tables.get(tableIndex).getColumns().get(i).getName())+"\n");
             }
         }
         return tmp;
@@ -90,12 +87,24 @@ public class Database {
 
         while(rs.next()){
             for(int i=0;i<tables.get(tableIndex).getColumns().size();i++){
-                tmp.append(tables.get(tableIndex).getColumns().get(i)+": "+rs.getString(tables.get(tableIndex).getColumns().get(i))+"\n");
+                tmp.append((i+1)+". "+tables.get(tableIndex).getColumns().get(i).getName()+": "+rs.getString(tables.get(tableIndex).getColumns().get(i).getName())+"\n");
             }
             tmp.append("\n");
         }
         return tmp;
     }
 
+    public void pridejZaznam(int tableIndex) throws SQLException {
+        StringBuilder tmp = new StringBuilder();
 
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM "+tables.get(tableIndex).getName());
+        ResultSet rs = stmt.executeQuery();
+        System.out.println("Zadej ");
+    }
+
+    public void odstranZaznam(int tableIndex, int id) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM "+tables.get(tableIndex).getName()+" WHERE id=?");
+        stmt.setInt(1,id);
+        stmt.executeUpdate();
+    }
 }
