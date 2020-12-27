@@ -20,10 +20,13 @@ public class Table {
         return columns;
     }
 
-    public String[] getColumnNames(){
-        String[]arr = new String[columns.size()];
-        for (int i=0;i<arr.length;i++){
-            arr[i]=columns.get(i).getName();
+    public StringBuilder getColumnNames(boolean cisla){
+        StringBuilder arr = new StringBuilder();
+        int counter=1;
+        for (Column e :columns){
+            if(cisla)arr.append(counter+".");
+            arr.append(e.getName()+" ");
+            counter++;
         }
         return arr;
     }

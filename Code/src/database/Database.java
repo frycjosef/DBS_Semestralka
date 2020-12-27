@@ -4,6 +4,7 @@ import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -83,7 +84,7 @@ public class Database {
         return tmp;
     }
 
-    public StringBuilder listTable(int tableIndex) throws SQLException {
+    public StringBuilder listTable(int tableIndex,boolean cisla) throws SQLException {
         StringBuilder tmp = new StringBuilder();
 
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM "+tables.get(tableIndex).getName());
@@ -91,7 +92,8 @@ public class Database {
 
         while(rs.next()){
             for(int i=0;i<tables.get(tableIndex).getColumns().size();i++){
-                tmp.append((i+1)+". "+tables.get(tableIndex).getColumns().get(i).getName()+": "+rs.getString(tables.get(tableIndex).getColumns().get(i).getName())+"\n");
+                if(cisla)tmp.append((i+1)+". ");
+                tmp.append(tables.get(tableIndex).getColumns().get(i).getName()+": "+rs.getString(tables.get(tableIndex).getColumns().get(i).getName())+"\n");
             }
             tmp.append("\n");
         }
@@ -132,7 +134,12 @@ public class Database {
 
                     break;
                 case "int":
-                    stmt.setInt(i+1, sc.nextInt());
+                    try {
+                        stmt.setInt(i + 1, sc.nextInt());
+                    }catch (InputMismatchException e){
+                        System.out.println("Zadán špatný formát");
+                        return;
+                    }
                     break;
                 case "date":
                     System.out.println("Formát DD/MM/YYYY");
@@ -146,7 +153,13 @@ public class Database {
                     stmt.setDate(i+1, date);
                     break;
                 case "char":
-                    stmt.setString(i+1,sc.next());
+                    tmpstr=sc.next();
+                    if(tmpstr.toUpperCase().equals("Z")||tmpstr.toUpperCase().equals("M")) {
+                        stmt.setString(i + 1, tmpstr);
+                    }else{
+                        System.out.println("Zadane pohlavi neexistuje");
+                        return;
+                    }
                     break;
             }
         }
@@ -157,6 +170,14 @@ public class Database {
     public void odstranZaznam(int tableIndex, int id) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("DELETE FROM "+tables.get(tableIndex).getName()+" WHERE id=?");
         stmt.setInt(1,id);
+        stmt.executeUpdate();
+    }
+
+    public void editZaznam(int tableIndex, int id,int atribut) throws SQLException {
+        System.out.println("Zadej nové "+tables.get(tableIndex).getColumns().get(atribut-1).getName());
+        String tmp=sc.nextLine();
+        PreparedStatement stmt = conn.prepareStatement("UPDATE "+tables.get(tableIndex).getName()+" SET "+tables.get(tableIndex).getColumns().get(atribut-1).getName()+"='"+tmp+"' WHERE id=?");
+        stmt.setInt(1, id);
         stmt.executeUpdate();
     }
 }

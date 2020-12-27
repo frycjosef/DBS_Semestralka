@@ -67,8 +67,30 @@ public class PlastikaApp {
                     break;
                 case 2:
                     //editovat zaznam
+                    vyberTabulku(database);
+                    volba2=nacistVolbu();
+                    if(volba2>database.getTables().size()){
+                        System.out.println("Neplatná volba");
+                    }
+
+                    if(volba2!=0){
+                        System.out.println("Zadej id záznamu, který má být upraven");
+                        System.out.println("0. Zpět");
+                        volba=nacistVolbu();
+                        if(volba>0){
+                            System.out.println(database.findViaId(volba,volba2-1));
+                            System.out.println();
+                            System.out.println("Vyber atribut, který má být upraven");
+                            System.out.println(database.getTables().get(volba2-1).getColumnNames(true).toString().replace(" ", "\n"));
+                            int atribut=nacistVolbu();
+                            if(atribut>=1)database.editZaznam(volba2-1, volba,atribut);
+                            else System.out.println("Neplatná volba");
+                        }
+                        else System.out.println("Neplatná volba");
+                    }
                     break;
                 case 3:
+                    //odstranit záznam
                     vyberTabulku(database);
                     volba2=nacistVolbu();
                     if(volba2>database.getTables().size()){
@@ -85,6 +107,7 @@ public class PlastikaApp {
                     }
                     break;
                 case 4:
+                    //získat záznam podle id
                     vyberTabulku(database);
                     volba2=nacistVolbu();
                     if(volba2>database.getTables().size()){
@@ -96,13 +119,14 @@ public class PlastikaApp {
                     }
                     break;
                 case 5:
+                    //získat všechny záznamy z dané tabulky
                     vyberTabulku(database);
                     volba2=nacistVolbu();
                     if(volba2>database.getTables().size()){
                         System.out.println("Neplatná volba");
                     }
                     if(volba2!=0){
-                        System.out.println(database.listTable(volba2-1));
+                        System.out.println(database.listTable(volba2-1,false));
                     }
                     break;
                 case 0:
