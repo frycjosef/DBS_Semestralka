@@ -140,8 +140,11 @@ public class PlastikaApp {
                     sqlMenu();
                     volba2 = nacistVolbu();
                     switch(volba2){
-                        case 1:
+                        case 3:
                             database.PojistovnySPacienty();
+                            break;
+                        case 6:
+                            database.pacientiSeZpravami();
                             break;
                         default:
                             System.out.println("Neplatna volba");
@@ -174,6 +177,7 @@ public class PlastikaApp {
         System.out.println("5.Získat všechny záznamy");
         System.out.println("6.SQL dotazy");
         System.out.println("0.Konec");
+        System.out.println();
     }
 
     private static int nacistVolbu() {
@@ -191,9 +195,15 @@ public class PlastikaApp {
     }
     
     public static void sqlMenu(){
-        System.out.println("");
-        System.out.println("SQL dotazy");
-        System.out.println("1. Pojistovny, ktere maji pacienty v nemocnicni databazi");
-        System.out.println("");
+        System.out.println();
+        System.out.println("SQL dotazy:");
+        System.out.println("1. ");
+        System.out.println("2. ");
+        System.out.println("3. Pojistovny, ktere maji pacienty v nemocnicni databazi");
+        System.out.println("4. Vypis Pacienty v abecednim poradi");
+        System.out.println("5. ");
+        System.out.println("6. Vsichni pacienti a jejich lekarske zpravy");
+        System.out.println("0. Zpet");
+        System.out.println();
     }
 }

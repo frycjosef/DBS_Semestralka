@@ -180,16 +180,19 @@ public class Database {
     public void editZaznam(int tableIndex, int id, int atribut) throws SQLException {
         System.out.println("Zadej nové " + tables.get(tableIndex).getColumns().get(atribut - 1).getName());
         String tmp = sc.nextLine();
-        PreparedStatement stmt = conn.prepareStatement("UPDATE " + tables.get(tableIndex).getName() + " SET " + tables.get(tableIndex).getColumns().get(atribut - 1).getName() + "='" + tmp + "' WHERE id=?");
+        PreparedStatement stmt = conn.prepareStatement("UPDATE " + tables.get(tableIndex).getName() + " SET " 
+                                + tables.get(tableIndex).getColumns().get(atribut - 1).getName() + "='" + tmp + "' WHERE id=?");
         stmt.setInt(1, id);
         stmt.executeUpdate();
     }
     
-    
+    /**
+     * Vypise vsechny pojistovny, ktere maji klienta registrovaneho v nemocnici.
+     * @throws SQLException 
+     */
     public void PojistovnySPacienty() throws SQLException {
-        StringBuilder tmp = new StringBuilder();
-
-        PreparedStatement stmt = conn.prepareStatement("SELECT Nazev FROM Zdravotni_Pojistovna WHERE kod IN (SELECT Zdravotni_Pojistovna_kod FROM Pacient)");
+        PreparedStatement stmt = conn.prepareStatement("SELECT Zdravotni_Pojistovna.Nazev "
+                         + "FROM Zdravotni_Pojistovna WHERE Zdravotni_Pojistovna.kod IN (SELECT Pacient.Zdravotni_Pojistovna_kod FROM Pacient)");
         ResultSet rs = stmt.executeQuery();
 
         System.out.println("");
@@ -198,6 +201,31 @@ public class Database {
         while (rs.next()) {
             System.out.println(rs.getString("Nazev"));
         }
+    }
+    
+    /*
+    
+            Nefunguje!!!!!!!!
+    
+    */
+    public void pacientiSeZpravami() throws SQLException {
+        StringBuilder tmp = new StringBuilder();
+
+        PreparedStatement stmt = conn.prepareStatement("SELECT Pacient.Prijmeni, Pacient.Jmeno, "
+                + "Zprava.id FROM Pacient LEFT JOIN Zprava ON (Pacient.id = Zprava.Pacient_id)");
+        ResultSet rs = stmt.executeQuery();
+
+        System.out.println("");
+        System.out.println("Prijmeni    Jmeno   ID Zpravy   Datum");
+        
+        while (rs.next()) {
+            String surname = rs.getString("Prijmeni");
+            String patientName = rs.getString("Jmeno");
+            String id = rs.getString("id");
+            String date = rs.getString("datum");
+            System.out.println(rs.getString(surname + " " + patientName + " " + id + " " + date));
+        }
+
     }
     
 }
