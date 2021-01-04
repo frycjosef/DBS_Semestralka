@@ -196,34 +196,31 @@ public class Database {
         ResultSet rs = stmt.executeQuery();
 
         System.out.println("");
-        System.out.println("--Pojistovny:");
+        System.out.println("Pojistovny");
+        System.out.println("-------------------------------");
         
         while (rs.next()) {
             System.out.println(rs.getString("Nazev"));
         }
     }
     
-    /*
     
-            Nefunguje!!!!!!!!
-    
-    */
-    public void pacientiSeZpravami() throws SQLException {
+    public void pocetProcedurDoktoru() throws SQLException {
         StringBuilder tmp = new StringBuilder();
 
-        PreparedStatement stmt = conn.prepareStatement("SELECT Pacient.Prijmeni, Pacient.Jmeno, "
-                + "Zprava.id FROM Pacient LEFT JOIN Zprava ON (Pacient.id = Zprava.Pacient_id)");
+        PreparedStatement stmt = conn.prepareStatement("SELECT Doktor.Prijmeni, "
+                        + "COUNT(Doktor_Procedura.Doktor_id) FROM Doktor LEFT JOIN Doktor_Procedura ON "
+                        + "(Doktor_Procedura.Doktor_id = Doktor.id) GROUP BY Doktor.Prijmeni");
         ResultSet rs = stmt.executeQuery();
 
         System.out.println("");
-        System.out.println("Prijmeni    Jmeno   ID Zpravy   Datum");
+        System.out.println("Prijmeni     |Pocet provedenych procedur");
+        System.out.println("-------------|--------------------------");
         
         while (rs.next()) {
-            String surname = rs.getString("Prijmeni");
-            String patientName = rs.getString("Jmeno");
-            String id = rs.getString("id");
-            String date = rs.getString("datum");
-            System.out.println(rs.getString(surname + " " + patientName + " " + id + " " + date));
+            String Prijmeni = rs.getString(1);
+            String pocetProcedur = rs.getString(2);
+            System.out.format("%-13s %s\n", Prijmeni, pocetProcedur);
         }
 
     }

@@ -140,11 +140,13 @@ public class PlastikaApp {
                     sqlMenu();
                     volba2 = nacistVolbu();
                     switch(volba2){
-                        case 3:
+                        case 1:
                             database.PojistovnySPacienty();
                             break;
-                        case 6:
-                            database.pacientiSeZpravami();
+                        case 2:
+                            database.pocetProcedurDoktoru();
+                            break;
+                        case 0:
                             break;
                         default:
                             System.out.println("Neplatna volba");
@@ -197,12 +199,8 @@ public class PlastikaApp {
     public static void sqlMenu(){
         System.out.println();
         System.out.println("SQL dotazy:");
-        System.out.println("1. ");
-        System.out.println("2. ");
-        System.out.println("3. Pojistovny, ktere maji pacienty v nemocnicni databazi");
-        System.out.println("4. Vypis Pacienty v abecednim poradi");
-        System.out.println("5. ");
-        System.out.println("6. Vsichni pacienti a jejich lekarske zpravy");
+        System.out.println("1. Pojistovny, ktere maji pacienty v nemocnicni databazi (SELECT in WHERE)");
+        System.out.println("2. Vypis doktoru a poctu procedur, ktere provedli (LEFT JOIN, GROUP BY)");
         System.out.println("0. Zpet");
         System.out.println();
     }
