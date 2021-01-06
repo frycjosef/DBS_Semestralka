@@ -146,6 +146,9 @@ public class PlastikaApp {
                         case 2:
                             database.pocetProcedurDoktoru();
                             break;
+                        case 3:
+                            database.pocetZpravPacientu();
+                            break;
                         case 0:
                             break;
                         default:
@@ -201,6 +204,7 @@ public class PlastikaApp {
         System.out.println("SQL dotazy:");
         System.out.println("1. Pojistovny, ktere maji pacienty v nemocnicni databazi (SELECT in WHERE)");
         System.out.println("2. Vypis doktoru a poctu procedur, ktere provedli (LEFT JOIN, GROUP BY)");
+        System.out.println("3. Vypis pacientu a poctu zprav, ktere jim byly vystaveny (SELECT in SELECT)");
         System.out.println("0. Zpet");
         System.out.println();
     }

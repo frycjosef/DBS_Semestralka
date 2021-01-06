@@ -192,7 +192,9 @@ public class Database {
      */
     public void PojistovnySPacienty() throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT Zdravotni_Pojistovna.Nazev "
-                         + "FROM Zdravotni_Pojistovna WHERE Zdravotni_Pojistovna.kod IN (SELECT Pacient.Zdravotni_Pojistovna_kod FROM Pacient)");
+                + "FROM Zdravotni_Pojistovna WHERE Zdravotni_Pojistovna.kod "
+                + "IN (SELECT Pacient.Zdravotni_Pojistovna_kod FROM Pacient) "
+                + "ORDER BY Zdravotni_Pojistovna.Nazev");
         ResultSet rs = stmt.executeQuery();
 
         System.out.println("");
@@ -204,13 +206,15 @@ public class Database {
         }
     }
     
-    
+    /**
+     * Vypise seznam doktoru a pocet jimi provedenych procedur.
+     * @throws SQLException 
+     */
     public void pocetProcedurDoktoru() throws SQLException {
-        StringBuilder tmp = new StringBuilder();
-
         PreparedStatement stmt = conn.prepareStatement("SELECT Doktor.Prijmeni, "
-                        + "COUNT(Doktor_Procedura.Doktor_id) FROM Doktor LEFT JOIN Doktor_Procedura ON "
-                        + "(Doktor_Procedura.Doktor_id = Doktor.id) GROUP BY Doktor.Prijmeni");
+                + "COUNT(Doktor_Procedura.Doktor_id) FROM Doktor LEFT JOIN Doktor_Procedura ON "
+                + "(Doktor_Procedura.Doktor_id = Doktor.id) GROUP BY Doktor.Prijmeni "
+                + "ORDER BY Doktor.Prijmeni");
         ResultSet rs = stmt.executeQuery();
 
         System.out.println("");
@@ -225,4 +229,25 @@ public class Database {
 
     }
     
+    /**
+     * Vypise seznam pacientu a pocet vystavenych zprav pro kazdeho z nich.
+     * @throws SQLException 
+     */
+    public void pocetZpravPacientu() throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT Pacient.Prijmeni, "
+                + "ZpravaCount = (SELECT COUNT(Zprava.id) FROM Zprava WHERE Pacient.id = Zprava.Pacient_id) "
+                + "FROM Pacient ORDER BY Pacient.Prijmeni");
+        ResultSet rs = stmt.executeQuery();
+
+        System.out.println("");
+        System.out.println("Prijmeni     |Pocet vystavenych zprav");
+        System.out.println("-------------|-----------------------");
+        
+        while (rs.next()) {
+            String Prijmeni = rs.getString(1);
+            String pocetZprav = rs.getString(2);
+            System.out.format("%-13s %s\n", Prijmeni, pocetZprav);
+        }
+
+    }
 }
