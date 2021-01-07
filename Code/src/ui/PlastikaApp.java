@@ -141,13 +141,22 @@ public class PlastikaApp {
                     volba2 = nacistVolbu();
                     switch(volba2){
                         case 1:
-                            database.PojistovnySPacienty();
+                            System.out.println(database.PojistovnySPacienty());
                             break;
                         case 2:
-                            database.pocetProcedurDoktoru();
+                            System.out.println(database.pocetProcedurDoktoru());
                             break;
                         case 3:
-                            database.pocetZpravPacientu();
+                            System.out.println(database.pocetZpravPacientu());
+                            break;
+                        case 4:
+                            System.out.println(database.klinikaPocetProcedur());
+                            break;
+                        case 5:
+                            System.out.println(database.pacientiBezProcedur());
+                            break;
+                        case 6:
+                            System.out.println(database.pohlaviPacientu());
                             break;
                         case 0:
                             break;
@@ -202,9 +211,12 @@ public class PlastikaApp {
     public static void sqlMenu(){
         System.out.println();
         System.out.println("SQL dotazy:");
-        System.out.println("1. Pojistovny, ktere maji pacienty v nemocnicni databazi (SELECT in WHERE)");
+        System.out.println("1. Vypis pojistovny, ktere maji pacienty v nemocnicni databazi (SELECT in WHERE)");
         System.out.println("2. Vypis doktoru a poctu procedur, ktere provedli (LEFT JOIN, GROUP BY)");
         System.out.println("3. Vypis pacientu a poctu zprav, ktere jim byly vystaveny (SELECT in SELECT)");
+        System.out.println("4. Vypis klinik a poctu procedur, ktere se na nich byly provedeny (LEFT JOIN, RIGHT JOIN, GROUP BY, COUNT)");
+        System.out.println("5. Vypiš všechny pacienty, kteri jeste nemeli proceduru");
+        System.out.println("6. Vypis rozdeleni pohlavi mezi pacienty");
         System.out.println("0. Zpet");
         System.out.println();
     }

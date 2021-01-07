@@ -48,6 +48,10 @@ public class Database {
         tables.add(new Table(tableName));
     }
 
+    /***
+     * Zjistí tabulky z databáze a uloží je do seznamu
+     * @throws SQLException
+     */
     public void initTables() throws SQLException {
         Statement stmt = conn.createStatement();
         Statement stmt2 = conn.createStatement();
@@ -63,12 +67,22 @@ public class Database {
 
     }
 
+    /***
+     * Vypíše všechny tabulky ze seznamu
+     */
     public void listTables() {
         for (int i = 0; i < tables.size(); i++) {
             System.out.println((i + 1) + ". " + tables.get(i).getName());
         }
     }
 
+    /***
+     *
+     * @param wantedId  Index položky, která má být nalezena
+     * @param tableIndex index tabulky v seznamu
+     * @return  StringBuilder pro výpis záznamu
+     * @throws SQLException
+     */
     public StringBuilder findViaId(int wantedId, int tableIndex) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + tables.get(tableIndex).getName() + " WHERE id=?");
         stmt.setInt(1, wantedId);
@@ -84,6 +98,13 @@ public class Database {
         return tmp;
     }
 
+    /***
+     *
+     * @param tableIndex index tabulky v seznamu
+     * @param cisla true = vypsání pořadí 1.,2.,3.,...
+     * @return StringBuilder s výpisem tabulky
+     * @throws SQLException
+     */
     public StringBuilder listTable(int tableIndex, boolean cisla) throws SQLException {
         StringBuilder tmp = new StringBuilder();
 
@@ -102,6 +123,11 @@ public class Database {
         return tmp;
     }
 
+    /***
+     * Přidá záznam do vybrané tabulky
+     * @param tableIndex index tabulky v seznamu
+     * @throws SQLException
+     */
     public void pridejZaznam(int tableIndex) throws SQLException {
         int size = tables.get(tableIndex).getColumns().size();
         StringBuilder tmp = new StringBuilder();
@@ -190,64 +216,126 @@ public class Database {
      * Vypise vsechny pojistovny, ktere maji klienta registrovaneho v nemocnici.
      * @throws SQLException 
      */
-    public void PojistovnySPacienty() throws SQLException {
+    public StringBuilder PojistovnySPacienty() throws SQLException {
+        StringBuilder output=new StringBuilder();
         PreparedStatement stmt = conn.prepareStatement("SELECT Zdravotni_Pojistovna.Nazev "
                 + "FROM Zdravotni_Pojistovna WHERE Zdravotni_Pojistovna.kod "
                 + "IN (SELECT Pacient.Zdravotni_Pojistovna_kod FROM Pacient) "
                 + "ORDER BY Zdravotni_Pojistovna.Nazev");
         ResultSet rs = stmt.executeQuery();
 
-        System.out.println("");
-        System.out.println("Pojistovny");
-        System.out.println("-------------------------------");
+        output.append("\n");
+        output.append("Pojistovny\n");
+        output.append("-------------------------------\n");
         
         while (rs.next()) {
-            System.out.println(rs.getString("Nazev"));
+            output.append(rs.getString("Nazev")+"\n");
         }
+        return output;
     }
     
     /**
      * Vypise seznam doktoru a pocet jimi provedenych procedur.
      * @throws SQLException 
      */
-    public void pocetProcedurDoktoru() throws SQLException {
+    public StringBuilder pocetProcedurDoktoru() throws SQLException {
+        StringBuilder output = new StringBuilder();
         PreparedStatement stmt = conn.prepareStatement("SELECT Doktor.Prijmeni, "
                 + "COUNT(Doktor_Procedura.Doktor_id) FROM Doktor LEFT JOIN Doktor_Procedura ON "
                 + "(Doktor_Procedura.Doktor_id = Doktor.id) GROUP BY Doktor.Prijmeni "
                 + "ORDER BY Doktor.Prijmeni");
         ResultSet rs = stmt.executeQuery();
 
-        System.out.println("");
-        System.out.println("Prijmeni     |Pocet provedenych procedur");
-        System.out.println("-------------|--------------------------");
+        output.append("\n");
+        output.append("Prijmeni     |Pocet provedenych procedur\n");
+        output.append("-------------|--------------------------\n");
         
         while (rs.next()) {
             String Prijmeni = rs.getString(1);
             String pocetProcedur = rs.getString(2);
-            System.out.format("%-13s %s\n", Prijmeni, pocetProcedur);
+            output.append(String.format("%-13s %s\n", Prijmeni, pocetProcedur));
         }
-
+        return output;
     }
     
     /**
      * Vypise seznam pacientu a pocet vystavenych zprav pro kazdeho z nich.
      * @throws SQLException 
      */
-    public void pocetZpravPacientu() throws SQLException {
+    public StringBuilder pocetZpravPacientu() throws SQLException {
+        StringBuilder output = new StringBuilder();
         PreparedStatement stmt = conn.prepareStatement("SELECT Pacient.Prijmeni, "
                 + "ZpravaCount = (SELECT COUNT(Zprava.id) FROM Zprava WHERE Pacient.id = Zprava.Pacient_id) "
                 + "FROM Pacient ORDER BY Pacient.Prijmeni");
         ResultSet rs = stmt.executeQuery();
 
-        System.out.println("");
-        System.out.println("Prijmeni     |Pocet vystavenych zprav");
-        System.out.println("-------------|-----------------------");
+        output.append("\n");
+        output.append("Prijmeni     |Pocet vystavenych zprav\n");
+        output.append("-------------|-----------------------\n");
         
         while (rs.next()) {
             String Prijmeni = rs.getString(1);
             String pocetZprav = rs.getString(2);
-            System.out.format("%-13s %s\n", Prijmeni, pocetZprav);
+            output.append(String.format("%-13s %s\n", Prijmeni, pocetZprav));
         }
-
+        return output;
     }
+
+    public StringBuilder klinikaPocetProcedur() throws SQLException {
+        StringBuilder output = new StringBuilder();
+        PreparedStatement stmt = conn.prepareStatement("SELECT B.nazev,pocet FROM (\n" +
+                "\t\tSELECT COUNT (A.Doktor_id)as pocet,Klinika_id FROM Doktor LEFT JOIN (\n" +
+                "\t\tSELECT Doktor_id FROM Zprava RIGHT JOIN Doktor_Procedura ON(Zprava.Doktor_Procedura_id = Doktor_Procedura.id)\n" +
+                "\t\t) A ON (A.Doktor_id=Doktor.id) GROUP BY Doktor.Klinika_id\n" +
+                "\t\t) A RIGHT JOIN Klinika B ON (B.id= A.Klinika_id)");
+        ResultSet rs = stmt.executeQuery();
+
+        output.append("\n");
+        output.append("Název               |Pocet procedur\n");
+        output.append("--------------------|-----------------------\n");
+
+        while (rs.next()) {
+            String Nazev = rs.getString(1);
+            String pocetProcedur = rs.getString(2);
+            output.append(String.format("%-20s %s\n", Nazev, pocetProcedur));
+        }
+        return output;
+    }
+
+    public StringBuilder pacientiBezProcedur() throws SQLException {
+        StringBuilder output = new StringBuilder();
+        PreparedStatement stmt = conn.prepareStatement("SELECT A.jmeno, A.Prijmeni FROM Pacient A,(SELECT Pacient.id FROM Pacient EXCEPT SELECT Pacient_id FROM Zprava)B WHERE A.id = B.id");
+        ResultSet rs = stmt.executeQuery();
+
+        output.append("\n");
+        output.append("Jméno a přijmení    \n");
+        output.append("------------------\n");
+
+        while (rs.next()) {
+            String Jmeno = rs.getString(1);
+            output.append(Jmeno);
+        }
+        return output;
+    }
+
+    public StringBuilder pohlaviPacientu() throws SQLException {
+        StringBuilder output = new StringBuilder();
+        PreparedStatement stmt = conn.prepareStatement("SELECT A.pocetM, B.pocetZ FROM \n" +
+                "\t\t(SELECT COUNT(id) as pocetM FROM Pacient WHERE (Pohlavi='M'))A LEFT JOIN\n" +
+                "\t\t(SELECT COUNT(id) as pocetZ FROM Pacient WHERE (Pohlavi='Z')) B ON (A.pocetM>=0 OR B.pocetZ>=0)");
+        ResultSet rs = stmt.executeQuery();
+
+        output.append("\n");
+        output.append("Pocet muzu  | Pocet zen    \n");
+        output.append("--------------------------\n");
+
+        while (rs.next()) {
+            String muzi = rs.getString(1);
+            String zeny = rs.getString(2);
+            output.append(String.format("%-13s %s\n", muzi, zeny));
+        }
+        return output;
+    }
+
+
 }
