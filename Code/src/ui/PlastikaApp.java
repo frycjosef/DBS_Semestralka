@@ -139,7 +139,7 @@ public class PlastikaApp {
                 case 6:
                     sqlMenu();
                     volba2 = nacistVolbu();
-                    switch(volba2){
+                    switch (volba2) {
                         case 1:
                             System.out.println(database.PojistovnySPacienty());
                             break;
@@ -174,6 +174,11 @@ public class PlastikaApp {
 
     }
 
+    /**
+     * Prints out list of tables from database.
+     *
+     * @param database Chosen database to print list of.
+     */
     public static void vyberTabulku(Database database) {
         System.out.println();
         System.out.println("Vyber tabulku");
@@ -181,6 +186,9 @@ public class PlastikaApp {
         System.out.println("0. Zpět");
     }
 
+    /**
+     * Prints out main menu.
+     */
     public static void mainMenu() {
         System.out.println();
         System.out.println("Hlavní menu");
@@ -194,6 +202,11 @@ public class PlastikaApp {
         System.out.println();
     }
 
+    /**
+     * Reads users choise and checks validity.
+     *
+     * @return volba Users choise.
+     */
     private static int nacistVolbu() {
         int volba = -1;
         System.out.print("Zadej zvolenou polozku menu: ");
@@ -207,8 +220,11 @@ public class PlastikaApp {
         }
         return volba;
     }
-    
-    public static void sqlMenu(){
+
+    /**
+     * Prints out SQL menu.
+     */
+    public static void sqlMenu() {
         System.out.println();
         System.out.println("SQL dotazy:");
         System.out.println("1. Vypis pojistovny, ktere maji pacienty v nemocnicni databazi (SELECT in WHERE)");
