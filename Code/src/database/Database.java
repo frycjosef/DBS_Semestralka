@@ -264,7 +264,8 @@ public class Database {
 
     /**
      * Prints all Insurance companies which has got their clients registered in
-     * the hospital. (SELECT in WHERE)
+     * the hospital.
+     * (SELECT in WHERE)
      *
      * @return output Chosen set of records.
      * @throws SQLException Failed to print chosen records.
@@ -288,8 +289,8 @@ public class Database {
     }
 
     /**
-     * Prints list of doctors and procedures performed by them. (LEFT JOIN,
-     * GROUP BY)
+     * Prints list of doctors and procedures performed by them.
+     * (LEFT JOIN, GROUP BY)
      *
      * @return output Chosen set of records.
      * @throws SQLException Failed to print chosen records.
@@ -369,7 +370,8 @@ public class Database {
     }
 
     /**
-     * Prints list of patients without any procedures. (SELECT in FROM, EXCEPT)
+     * Prints list of patients without any procedures.
+     * (SELECT in FROM, EXCEPT)
      *
      * @return output Chosen set of records.
      * @throws SQLException Failed to print chosen records.
@@ -382,18 +384,20 @@ public class Database {
         ResultSet rs = stmt.executeQuery();
 
         output.append("\n");
-        output.append("Jméno a přijmení    \n");
-        output.append("------------------\n");
+        output.append("Jméno         |přijmení    \n");
+        output.append("--------------|-------------\n");
 
         while (rs.next()) {
             String Jmeno = rs.getString(1);
-            output.append(Jmeno);
+            String prijmeni = rs.getString(2);
+            output.append(String.format("%-14s %s\n", Jmeno, prijmeni));
         }
         return output;
     }
 
     /**
-     * Prints number of patients of certain gender. (SELECT in FROM, LEFT JOIN)
+     * Prints number of patients of certain gender.
+     * (SELECT in FROM, LEFT JOIN)
      *
      * @return output Chosen set of records.
      * @throws SQLException Failed to print chosen records.
